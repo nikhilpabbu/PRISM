@@ -1,0 +1,375 @@
+import os
+import re
+import random
+import uvicorn
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse
+
+from models import (
+    ProfileSwitchRequest, TextSimplifyRequest, TextSimplifyResponse,
+    OCRRequest, OCRResponse, ScheduleCreateRequest, EmotionLogRequest,
+    PersonCreateRequest, FaceScanRequest, FaceScanResponse,
+    CopilotQueryRequest, CopilotQueryResponse
+)
+from database import db
+from opencv_service import opencv_scanner
+
+app = FastAPI(
+    title="PRISM: Personalized Real-time Intelligent Support Module API",
+    description="Adaptive Accessibility Platform Backend for Dyslexia, Autism, and Prosopagnosia",
+    version="1.0.0"
+)
+
+# CORS middleware for local frontend development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- Universal / Profile Endpoints ---
+
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok", "app": "PRISM Adaptive Accessibility Platform", "version": "1.0.0"}
+
+@app.get("/api/user")
+def get_user_profile():
+    return db.get_user()
+
+@app.post("/api/user/profile")
+def switch_profile(req: ProfileSwitchRequest):
+    valid_profiles = ["dyslexia", "autism", "face_blindness", "unified"]
+    if req.profile_id not in valid_profiles:
+        raise HTTPException(status_code=400, detail="Invalid profile ID")
+    user = db.set_active_profile(req.profile_id)
+    return {"status": "success", "active_profile": req.profile_id, "user": user}
+
+@app.post("/api/user/preferences")
+async def update_preferences(req: Request):
+    data = await req.json()
+    updated = db.update_user_preferences(data)
+    return {"status": "success", "preferences": updated}
+
+# --- Dyslexia Module Endpoints ---
+
+@app.get("/api/dyslexia/reading-items")
+def list_reading_items():
+    return db.get_reading_items()
+
+@app.get("/api/dyslexia/reading-items/{item_id}")
+def get_reading_item(item_id: str):
+    item = db.get_reading_item(item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Reading item not found")
+    return item
+
+@app.post("/api/dyslexia/simplify", response_model=TextSimplifyResponse)
+def simplify_text(req: TextSimplifyRequest):
+    text = req.text.strip()
+    if not text:
+        text = "Photosynthesis is the process used by plants to convert light energy into chemical energy."
+    
+    # Calculate word & syllable metrics
+    words = re.findall(r'\b\w+\b', text)
+    word_count = len(words)
+    syllable_estimate = sum([max(1, len(re.findall(r'[aeiouyAEIOUY]+', w))) for w in words])
+    reading_time = round(max(0.1, word_count / 130.0), 1)
+
+    # Intelligent text transformations
+    if req.mode == "shorter":
+        sentences = [s.strip() for s in re.split(r'[.!?]+', text) if s.strip()]
+        simplified = ". ".join(sentences[:max(1, len(sentences)//2)]) + "."
+        difficulty = "Very Easy (Condensed)"
+    elif req.mode == "bullet":
+        sentences = [s.strip() for s in re.split(r'[.!?]+', text) if s.strip()]
+        simplified = "\n".join([f"• {s}." for s in sentences if len(s) > 3])
+        difficulty = "Visual Bullet Format"
+    elif req.mode == "dyslexia_spaced":
+        simplified = "  ".join(words)
+        difficulty = "Expanded Spacing"
+    else:  # 'simpler'
+        # Replace complex academic or multi-syllabic vocabulary with everyday analogies
+        replacements = {
+            "fundamental": "basic",
+            "biological": "living plant",
+            "radiant": "sun",
+            "convert": "turn",
+            "molecules": "building blocks",
+            "chlorophyll": "green leaf helper (chlorophyll)",
+            "chloroplasts": "tiny plant kitchens (chloroplasts)",
+            "stomata": "tiny breathing holes on leaves",
+            "microscopic": "very tiny",
+            "nourishing": "healthy",
+            "sustains": "helps feed",
+            "photosynthesis": "how plants make food with sunlight (photosynthesis)",
+            "atmosphere": "fresh air",
+            "generates": "makes",
+            "facilitates": "helps"
+        }
+        simplified = text
+        for orig, rep in replacements.items():
+            pattern = re.compile(re.escape(orig), re.IGNORECASE)
+            simplified = pattern.sub(rep, simplified)
+        difficulty = "Accessible / Grade 4 Reading Level"
+
+    # Extract key actionable points
+    key_points = [
+        "Plants use sunlight, water, and air to make sweet food (glucose).",
+        "The green color in leaves helps trap the warm sunlight.",
+        "As a wonderful bonus, plants give off clean oxygen for all humans and animals to breathe!"
+    ] if "photo" in text.lower() or "plant" in text.lower() else [
+        "Core concept is broken down into simple, direct steps.",
+        "Key takeaways are highlighted for quick memory recall.",
+        "Use Text-to-Speech to listen at your comfortable pace."
+    ]
+
+    return TextSimplifyResponse(
+        original_text=text,
+        simplified_text=simplified,
+        key_points=key_points,
+        reading_time_minutes=reading_time,
+        difficulty_score=difficulty,
+        syllable_count=syllable_estimate
+    )
+
+@app.post("/api/dyslexia/ocr", response_model=OCRResponse)
+def ocr_extract(req: OCRRequest):
+    presets = {
+        "textbook_science": {
+            "text": "Photosynthesis is the process by which green plants and certain other organisms transform light energy into chemical energy. During photosynthesis in green plants, light energy is captured and used to convert water, carbon dioxide, and minerals into oxygen and energy-rich organic compounds.",
+            "lang": "English",
+            "conf": 0.98,
+            "readability": "Intermediate (Grade 8)"
+        },
+        "classroom_board": {
+            "text": "Homework Due Thursday:\n1. Read pages 42 to 48 of The Invisible String.\n2. Write 3 sentences about how the characters connect.\n3. Bring your science project notebook to class.",
+            "lang": "English",
+            "conf": 0.94,
+            "readability": "Easy (Grade 4)"
+        },
+        "handwritten_note": {
+            "text": "The quick brown fox jumps over the lazy dog.\nPractice daily reading with OpenDyslexic font to increase reading fluency and reduce visual fatigue.",
+            "lang": "English",
+            "conf": 0.96,
+            "readability": "Elementary (Grade 3)"
+        }
+    }
+    
+    selected = presets.get(req.preset_id or "handwritten_note", presets["handwritten_note"])
+    words = len(selected["text"].split())
+    
+    return OCRResponse(
+        extracted_text=selected["text"],
+        confidence=selected["conf"],
+        detected_language=selected["lang"],
+        word_count=words,
+        readability_level=selected["readability"]
+    )
+
+# --- Autism Module Endpoints ---
+
+@app.get("/api/autism/schedules")
+def get_schedules():
+    return db.get_schedules()
+
+@app.post("/api/autism/schedules")
+def create_schedule(req: ScheduleCreateRequest):
+    return db.add_schedule(req.dict())
+
+@app.post("/api/autism/schedules/{schedule_id}/toggle")
+def toggle_schedule(schedule_id: str):
+    res = db.toggle_schedule(schedule_id)
+    if not res:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+    return res
+
+@app.get("/api/autism/emotions")
+def get_emotions():
+    return db.get_emotion_logs()
+
+@app.post("/api/autism/emotions")
+def log_emotion(req: EmotionLogRequest):
+    return db.add_emotion_log(
+        emotion=req.emotion,
+        intensity=req.intensity,
+        note=req.note or "",
+        trigger=req.trigger or ""
+    )
+
+@app.get("/api/autism/social-stories")
+def get_social_stories():
+    return db.get_social_stories()
+
+@app.get("/api/autism/aac")
+def get_aac_items():
+    return db.get_aac_items()
+
+# --- Face Blindness (Prosopagnosia) Endpoints ---
+
+@app.get("/api/face-blindness/contacts")
+def get_contacts():
+    return db.get_contacts()
+
+@app.get("/api/face-blindness/contacts/{contact_id}")
+def get_contact(contact_id: str):
+    c = db.get_contact(contact_id)
+    if not c:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    return c
+
+@app.post("/api/face-blindness/contacts")
+def add_contact(req: PersonCreateRequest):
+    return db.add_contact(req.dict())
+
+@app.post("/api/face-blindness/scan-cv")
+async def scan_face_opencv(req: Request):
+    body = await req.json()
+    image_data = body.get("image_data")
+    target_id = body.get("target_id")
+    contacts = db.get_contacts()
+    
+    # If image_data not passed directly, use selected contact's avatar as target
+    if not image_data and target_id:
+        target_person = next((c for c in contacts if c["id"] == target_id), contacts[0])
+        image_data = target_person.get("avatar_url")
+    elif not image_data:
+        image_data = contacts[0].get("avatar_url")
+
+    result = opencv_scanner.scan_face(image_data, contacts, target_id)
+    return result
+
+@app.post("/api/face-blindness/scan", response_model=FaceScanResponse)
+def scan_face(req: FaceScanRequest):
+    contacts = db.get_contacts()
+    
+    # Match simulated target or pick relevant familiar person
+    target_id = req.simulated_target_id or "person_1"
+    matched = next((c for c in contacts if c["id"] == target_id), contacts[0])
+    
+    starters = [
+        f"Hi {matched['name']}! Great to see you again.",
+        f"How is the {matched['context']} going?",
+        f"I remember we talked about {matched['reminder'].lower()}"
+    ]
+
+    return FaceScanResponse(
+        detected=True,
+        confidence=round(random.uniform(0.94, 0.99), 2),
+        matched_person=matched,
+        bounding_box={"x": 25.0, "y": 18.0, "width": 50.0, "height": 62.0},
+        landmarks={
+            "eyes": {"left": [38.0, 35.0], "right": [62.0, 35.0]},
+            "nose": [50.0, 48.0],
+            "mouth": [50.0, 65.0],
+            "distinctive_features": matched.get("visual_cues", [])
+        },
+        detected_features=matched.get("visual_cues", ["Friendly posture"]),
+        immediate_context=f"Role: {matched['role']} • Context: {matched['context']} • Last met: {matched['last_met']}",
+        conversation_starters=starters
+    )
+
+@app.get("/api/face-blindness/quiz")
+def get_face_quiz():
+    contacts = db.get_contacts()
+    if len(contacts) < 2:
+        return []
+    
+    questions = []
+    sample_targets = random.sample(contacts, min(4, len(contacts)))
+    
+    for target in sample_targets:
+        # Generate 3 multiple choice questions per person
+        other_names = [c["name"] for c in contacts if c["id"] != target["id"]]
+        random.shuffle(other_names)
+        
+        choices = [target["name"]] + other_names[:3]
+        random.shuffle(choices)
+        
+        cue_hint = target["visual_cues"][0] if target.get("visual_cues") else "Familiar smile"
+        context_hint = target["context"]
+        
+        questions.append({
+            "id": f"quiz_{target['id']}",
+            "person_id": target["id"],
+            "photo_url": target["avatar_url"],
+            "prompt": "Who is this person?",
+            "clue": f"Visual Clue: {cue_hint} | Setting: {context_hint}",
+            "correct_answer": target["name"],
+            "options": choices,
+            "context_explanation": f"This is {target['name']}, your {target['role']} from {target['context']}."
+        })
+    return questions
+
+# --- PRISM AI Copilot & Cross-Disability Hub ---
+
+@app.post("/api/copilot/query", response_model=CopilotQueryResponse)
+def copilot_query(req: CopilotQueryRequest):
+    msg = req.message.lower()
+    profile = req.profile.lower()
+    
+    if "read" in msg or "dyslexia" in msg or profile == "dyslexia":
+        reply = "I'm PRISM Reading Copilot! I can rephrase complex sentences into gentle bite-sized bullet points, read text aloud with word highlighting, or activate the tinted reading ruler."
+        suggestions = ["Simplify this paragraph", "Read aloud at 0.9x speed", "Switch to Cream background tint", "Explain syllable breakdown"]
+        action = "dyslexia_assist"
+    elif "calm" in msg or "anxious" in msg or "routine" in msg or profile == "autism":
+        reply = "I'm PRISM Sensory & Routine Copilot. Would you like to start a 4-7-8 breathing session, check off your next schedule task, or play soothing rain soundscapes in the Calm Zone?"
+        suggestions = ["Start 2-min Guided Breathing", "Play Rain & Alpha Waves", "View Today's Visual Schedule", "Open AAC Communication Board"]
+        action = "autism_assist"
+    elif "who is" in msg or "recognize" in msg or "face" in msg or profile == "face_blindness":
+        reply = "I'm PRISM Face & Memory Copilot. Point your camera or tap 'Scan Person' and I will instantly identify familiar people, highlight their glasses/hair visual cues, and remind you of your last conversation!"
+        suggestions = ["Scan Face with Camera", "Practice Memory Flashcards", "Search Teacher David Miller", "Add New Visual Cue"]
+        action = "face_assist"
+    else:
+        reply = "Hello Alex! I am your PRISM Adaptive AI Copilot. I automatically tailor my interface, reading aids, sensory tools, and memory assistants to your needs. How can I support you today?"
+        suggestions = ["Switch to Dyslexia Mode", "Switch to Autism Mode", "Switch to Face Blindness Mode", "View Global Analytics"]
+        action = "general_assist"
+
+    return CopilotQueryResponse(
+        reply=reply,
+        suggestions=suggestions,
+        action_type=action,
+        action_payload={"active_profile": profile}
+    )
+
+@app.get("/api/analytics")
+def get_analytics():
+    user = db.get_user()
+    prevalence = db.get_prevalence_data()
+    return {
+        "user_stats": {
+            "reading_minutes_today": user["reading_minutes_today"],
+            "reading_goal_minutes": user["reading_goal_minutes"],
+            "reading_streak_days": user["reading_streak_days"],
+            "calm_minutes_today": user["calm_minutes_today"],
+            "recognized_contacts_count": user["recognized_contacts_count"],
+            "points": user["points"],
+            "badges": user["badges"]
+        },
+        "prevalence_data": prevalence
+    }
+
+@app.get("/api/business-canvas")
+def get_business_canvas():
+    return db.get_business_canvas()
+
+# --- Serve Frontend Static Files ---
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
+if os.path.exists(frontend_path):
+    app.mount("/static", StaticFiles(directory=frontend_path), name="static")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # If static asset directly requested
+        file_target = os.path.join(frontend_path, full_path)
+        if full_path and os.path.isfile(file_target):
+            return FileResponse(file_target)
+        # Otherwise fallback to index.html for React SPA router
+        return FileResponse(os.path.join(frontend_path, "index.html"))
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)

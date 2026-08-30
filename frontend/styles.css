@@ -1,0 +1,353 @@
+/* PRISM: Personalized Real-time Intelligent Support Module
+   Advanced Adaptive Accessibility Platform Stylesheet */
+
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+/* Dyslexia friendly font definition */
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@0.1.1/woff/OpenDyslexic-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@0.1.1/woff/OpenDyslexic-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+  --font-lexend: 'Lexend', sans-serif;
+  --font-atkinson: 'Atkinson Hyperlegible', sans-serif;
+  --font-dyslexic: 'OpenDyslexic', 'Lexend', sans-serif;
+  
+  /* Theme Variables Default */
+  --primary-color: #7c3aed;
+  --primary-light: #ede9fe;
+  --primary-gradient: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  --accent-color: #8b5cf6;
+  
+  --bg-app: #f8fafc;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(226, 232, 240, 0.8);
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  
+  --line-height-factor: 1.7;
+  --letter-spacing-factor: 0.02em;
+  --word-spacing-factor: 0.05em;
+}
+
+/* Base Body Styles */
+body {
+  font-family: var(--font-inter);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: var(--line-height-factor);
+  letter-spacing: var(--letter-spacing-factor);
+  word-spacing: var(--word-spacing-factor);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Tint Overlays for Dyslexia Reading Comfort */
+body.tint-cream {
+  background-color: #fbf7ee !important;
+}
+body.tint-cream .prism-card {
+  background-color: rgba(254, 250, 240, 0.9) !important;
+  border-color: #e8dec8 !important;
+}
+
+body.tint-peach {
+  background-color: #fff4ed !important;
+}
+body.tint-peach .prism-card {
+  background-color: rgba(255, 244, 237, 0.9) !important;
+  border-color: #fed7aa !important;
+}
+
+body.tint-mint {
+  background-color: #f0fdf4 !important;
+}
+body.tint-mint .prism-card {
+  background-color: rgba(240, 253, 244, 0.9) !important;
+  border-color: #bbf7d0 !important;
+}
+
+body.tint-lavender {
+  background-color: #faf5ff !important;
+}
+body.tint-lavender .prism-card {
+  background-color: rgba(250, 245, 255, 0.9) !important;
+  border-color: #e9d5ff !important;
+}
+
+body.tint-dark {
+  background-color: #090d16 !important;
+  color: #f1f5f9 !important;
+}
+body.tint-dark .prism-card {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+body.tint-dark .text-slate-800,
+body.tint-dark .text-gray-900,
+body.tint-dark .text-slate-900 {
+  color: #f8fafc !important;
+}
+body.tint-dark .text-slate-600,
+body.tint-dark .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+/* High Contrast Mode */
+body.high-contrast {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+body.high-contrast .prism-card {
+  background-color: #121212 !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+}
+body.high-contrast a, body.high-contrast button {
+  outline: 2px solid #38bdf8 !important;
+}
+
+/* Colorblind Simulation Filters */
+body.filter-protanopia {
+  filter: url('#protanopia-filter');
+}
+body.filter-deuteranopia {
+  filter: url('#deuteranopia-filter');
+}
+body.filter-tritanopia {
+  filter: url('#tritanopia-filter');
+}
+
+/* Font Class Overrides */
+.font-opendyslexic {
+  font-family: 'OpenDyslexic', sans-serif !important;
+}
+.font-lexend {
+  font-family: 'Lexend', sans-serif !important;
+}
+.font-atkinson {
+  font-family: 'Atkinson Hyperlegible', sans-serif !important;
+}
+.font-inter {
+  font-family: 'Inter', sans-serif !important;
+}
+.font-outfit {
+  font-family: 'Outfit', sans-serif !important;
+}
+
+/* Glassmorphism Card Utilities */
+.prism-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+}
+
+.prism-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+.prism-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.08);
+}
+
+/* Profile Gradient Themes */
+.theme-dyslexia-gradient {
+  background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #c084fc 100%);
+}
+.theme-autism-gradient {
+  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+}
+.theme-faceblindness-gradient {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #60a5fa 100%);
+}
+.theme-unified-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #059669 50%, #0284c7 100%);
+}
+
+/* Animated Glowing Gradient Rings */
+.glow-ring-purple {
+  box-shadow: 0 0 25px -3px rgba(124, 58, 237, 0.4);
+}
+.glow-ring-green {
+  box-shadow: 0 0 25px -3px rgba(16, 185, 129, 0.4);
+}
+.glow-ring-blue {
+  box-shadow: 0 0 25px -3px rgba(37, 99, 235, 0.4);
+}
+
+/* Bionic Reading Bold Highlighting */
+.bionic-bold {
+  font-weight: 700;
+  color: #1e1b4b;
+}
+body.tint-dark .bionic-bold {
+  color: #ffffff !important;
+}
+
+/* Reading Ruler Overlay */
+.reading-ruler {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: rgba(254, 240, 138, 0.35);
+  border-top: 2px solid rgba(234, 179, 8, 0.7);
+  border-bottom: 2px solid rgba(234, 179, 8, 0.7);
+  pointer-events: none;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+  transition: top 0.08s ease-out;
+  z-index: 10;
+}
+
+/* Karaoke TTS Word Highlight */
+.tts-word-highlight {
+  background-color: #fef08a !important;
+  color: #713f12 !important;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+  transform: scale(1.04);
+  display: inline-block;
+  transition: all 0.12s ease;
+}
+
+/* Calm Zone Breathing Circle Animation */
+@keyframes breatheGuide {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.6;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  40% {
+    /* Inhale end */
+    transform: scale(1.15);
+    opacity: 1;
+    box-shadow: 0 0 50px rgba(16, 185, 129, 0.6);
+  }
+  60% {
+    /* Hold */
+    transform: scale(1.15);
+    opacity: 1;
+    box-shadow: 0 0 60px rgba(52, 211, 153, 0.8);
+  }
+  100% {
+    /* Exhale end */
+    transform: scale(0.7);
+    opacity: 0.6;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+}
+
+.breathing-circle-active {
+  animation: breatheGuide 19s ease-in-out infinite;
+}
+
+/* Wave Sound Synthesizer Ripples */
+@keyframes wavePulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+.audio-pulse {
+  animation: wavePulse 3s ease-in-out infinite;
+}
+
+/* Face Recognition HUD Target Frame */
+.hud-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: #38bdf8;
+}
+.hud-tl { top: -2px; left: -2px; border-top: 3px solid #38bdf8; border-left: 3px solid #38bdf8; border-top-left-radius: 6px; }
+.hud-tr { top: -2px; right: -2px; border-top: 3px solid #38bdf8; border-right: 3px solid #38bdf8; border-top-right-radius: 6px; }
+.hud-bl { bottom: -2px; left: -2px; border-bottom: 3px solid #38bdf8; border-left: 3px solid #38bdf8; border-bottom-left-radius: 6px; }
+.hud-br { bottom: -2px; right: -2px; border-bottom: 3px solid #38bdf8; border-right: 3px solid #38bdf8; border-bottom-right-radius: 6px; }
+
+@keyframes scanline {
+  0% { top: 0%; opacity: 0.2; }
+  50% { opacity: 0.9; }
+  100% { top: 96%; opacity: 0.2; }
+}
+
+.hud-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #38bdf8, #818cf8, transparent);
+  box-shadow: 0 0 12px #38bdf8;
+  animation: scanline 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.5);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.8);
+}
+
+/* Responsive Floating Nav Drawer */
+.glass-nav {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+body.tint-dark .glass-nav {
+  background: rgba(15, 23, 42, 0.92) !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.8) !important;
+}
+
+/* Syllable tint styling */
+.syllable-even {
+  color: #7c3aed;
+  font-weight: 600;
+}
+.syllable-odd {
+  color: #0d9488;
+  font-weight: 600;
+}
