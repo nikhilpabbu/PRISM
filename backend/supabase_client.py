@@ -131,6 +131,90 @@ DEFAULT_CONTACTS = [
             "hair_color": "Salt & Pepper",
             "confidence_signature": 0.97
         }
+    },
+    {
+        "id": "person_4",
+        "name": "Maya Lin",
+        "role": "Data Science Project Lead",
+        "avatar_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80",
+        "met_count": 12,
+        "last_met": "Yesterday at 1:40 PM",
+        "context": "Computational Lab 3",
+        "notes": "Lead researcher on machine learning evaluation",
+        "visual_cues": ["Emerald green cardigan", "Thin wireframe round glasses", "Silver bracelet"],
+        "voice_cues": ["Crisp and analytical", "Articulate cadence"],
+        "reminder": "Review model training loss metrics before Monday",
+        "category": "Work",
+        "facial_features": {
+            "face_shape": "Oval",
+            "glasses": True,
+            "beard": False,
+            "hair_color": "Black",
+            "confidence_signature": 0.96
+        }
+    },
+    {
+        "id": "person_5",
+        "name": "Carlos Rivera",
+        "role": "Older Brother & Consultant",
+        "avatar_url": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80",
+        "met_count": 35,
+        "last_met": "Sunday Dinner at 6:30 PM",
+        "context": "Family Home / Downtown Cafe",
+        "notes": "Always visits on weekends",
+        "visual_cues": ["Dimpled chin", "Aviator sunglasses clipped on shirt", "Wavy dark hair"],
+        "voice_cues": ["Deep energetic laugh", "Warm familiar tone"],
+        "reminder": "Call on Sunday afternoon to plan family weekend trip",
+        "category": "Family",
+        "facial_features": {
+            "face_shape": "Oval",
+            "glasses": False,
+            "beard": True,
+            "hair_color": "Dark Brown",
+            "confidence_signature": 0.99
+        }
+    },
+    {
+        "id": "person_6",
+        "name": "Sophia Nguyen",
+        "role": "Study Partner & Chemistry Major",
+        "avatar_url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&auto=format&fit=crop&q=80",
+        "met_count": 16,
+        "last_met": "Wednesday at 2:00 PM",
+        "context": "Science Library, 2nd Floor Study Cubicles",
+        "notes": "Study group collaborator",
+        "visual_cues": ["High sleek ponytail", "Bright yellow backpack", "Silver hoop earrings"],
+        "voice_cues": ["Enthusiastic and clear pronunciation", "Upbeat rhythm"],
+        "reminder": "Bring organic chemistry reaction flashcards",
+        "category": "Classmate",
+        "facial_features": {
+            "face_shape": "Round",
+            "glasses": False,
+            "beard": False,
+            "hair_color": "Black",
+            "confidence_signature": 0.97
+        }
+    },
+    {
+        "id": "person_7",
+        "name": "Samir Patel",
+        "role": "Personal Wellness Coach",
+        "avatar_url": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80",
+        "met_count": 9,
+        "last_met": "Monday at 8:00 AM",
+        "context": "Campus Recreation Gym",
+        "notes": "Cardio and sensory regulation routine guide",
+        "visual_cues": ["Navy athletic zip hoodie", "Black smartwatch on right wrist", "Broad bright smile"],
+        "voice_cues": ["Motivational and energetic tempo", "Encouraging tone"],
+        "reminder": "Drink 3 liters of water and track calm zone minutes",
+        "category": "Friend",
+        "facial_features": {
+            "face_shape": "Oval",
+            "glasses": False,
+            "beard": True,
+            "hair_color": "Black",
+            "confidence_signature": 0.98
+        }
     }
 ]
 
@@ -355,11 +439,27 @@ class SupabaseManager:
         return self.contacts_cache
 
     def save_contact(self, contact_dict: Dict[str, Any]) -> Dict[str, Any]:
+        import uuid
         user_id = contact_dict.get("user_id") or self.active_user_cache.get("id", "user_alex_01")
         contact_dict["user_id"] = user_id
+        if "id" not in contact_dict or not contact_dict["id"]:
+            contact_dict["id"] = "person_" + str(uuid.uuid4())[:8]
+        if "avatar_url" not in contact_dict or not contact_dict["avatar_url"]:
+            contact_dict["avatar_url"] = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"
+        if "met_count" not in contact_dict:
+            contact_dict["met_count"] = 1
+        if "last_met" not in contact_dict:
+            contact_dict["last_met"] = "Today"
+        if "facial_features" not in contact_dict:
+            contact_dict["facial_features"] = {
+                "face_shape": "Oval",
+                "glasses": False,
+                "beard": False,
+                "confidence_signature": 0.95
+            }
         
         # Update local cache
-        existing = next((c for c in self.contacts_cache if c["id"] == contact_dict["id"]), None)
+        existing = next((c for c in self.contacts_cache if c.get("id") == contact_dict["id"]), None)
         if existing:
             existing.update(contact_dict)
         else:

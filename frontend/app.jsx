@@ -121,10 +121,119 @@ function App() {
     }
   });
 
+  // Initial Default Familiar Persons Array
+  const DEFAULT_INITIAL_CONTACTS = [
+    {
+      id: "person_1",
+      name: "Dr. Aris Thorne",
+      role: "Chief Research Advisor",
+      avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+      met_count: 14,
+      last_met: "Yesterday at 3:15 PM",
+      context: "Neuroscience Lab 4B",
+      notes: "Leading cognitive load study",
+      visual_cues: ["Round tortoiseshell glasses", "Silver lapel pin", "Left parting silver hair"],
+      voice_cues: ["Calm baritone", "Speaks with deliberate pauses"],
+      reminder: "Review grant proposal before Friday",
+      category: "Work",
+      facial_features: { face_shape: "Oval", glasses: true, beard: false, hair_color: "Silver", confidence_signature: 0.98 }
+    },
+    {
+      id: "person_2",
+      name: "Elena Rostova",
+      role: "Senior UX Architect",
+      avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
+      met_count: 8,
+      last_met: "2 days ago",
+      context: "Innovation Hub, Floor 2",
+      notes: "Accessibility design partner",
+      visual_cues: ["Red cat-eye frames", "Always wears teal scarf", "Asymmetrical dark bob"],
+      voice_cues: ["Fast-paced enthusiastic speech", "Warm laughter"],
+      reminder: "Send feedback on Bionic Reading prototype",
+      category: "Colleague",
+      facial_features: { face_shape: "Heart", glasses: true, beard: false, hair_color: "Dark Brown", confidence_signature: 0.95 }
+    },
+    {
+      id: "person_3",
+      name: "Marcus Vance",
+      role: "Clinical Director",
+      avatar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80",
+      met_count: 21,
+      last_met: "Today at 10:00 AM",
+      context: "Therapy Wing Suite A",
+      notes: "Weekly check-in supervisor",
+      visual_cues: ["Neat trimmed salt-pepper beard", "Gold watch", "Deep set green eyes"],
+      voice_cues: ["Soft resonant tone", "British accent"],
+      reminder: "Discuss sensory regulation data from Calm Zone",
+      category: "Mentor",
+      facial_features: { face_shape: "Square", glasses: false, beard: true, hair_color: "Salt & Pepper", confidence_signature: 0.97 }
+    },
+    {
+      id: "person_4",
+      name: "Maya Lin",
+      role: "Data Science Project Lead",
+      avatar_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80",
+      met_count: 12,
+      last_met: "Yesterday at 1:40 PM",
+      context: "Computational Lab 3",
+      notes: "Lead researcher on machine learning evaluation",
+      visual_cues: ["Emerald green cardigan", "Thin wireframe round glasses", "Silver bracelet"],
+      voice_cues: ["Crisp and analytical", "Articulate cadence"],
+      reminder: "Review model training loss metrics before Monday",
+      category: "Work",
+      facial_features: { face_shape: "Oval", glasses: true, beard: false, hair_color: "Black", confidence_signature: 0.96 }
+    },
+    {
+      id: "person_5",
+      name: "Carlos Rivera",
+      role: "Older Brother & Consultant",
+      avatar_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80",
+      met_count: 35,
+      last_met: "Sunday Dinner at 6:30 PM",
+      context: "Family Home / Downtown Cafe",
+      notes: "Always visits on weekends",
+      visual_cues: ["Dimpled chin", "Aviator sunglasses clipped on shirt", "Wavy dark hair"],
+      voice_cues: ["Deep energetic laugh", "Warm familiar tone"],
+      reminder: "Call on Sunday afternoon to plan family weekend trip",
+      category: "Family",
+      facial_features: { face_shape: "Oval", glasses: false, beard: true, hair_color: "Dark Brown", confidence_signature: 0.99 }
+    },
+    {
+      id: "person_6",
+      name: "Sophia Nguyen",
+      role: "Study Partner & Chemistry Major",
+      avatar_url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&auto=format&fit=crop&q=80",
+      met_count: 16,
+      last_met: "Wednesday at 2:00 PM",
+      context: "Science Library, 2nd Floor Study Cubicles",
+      notes: "Study group collaborator",
+      visual_cues: ["High sleek ponytail", "Bright yellow backpack", "Silver hoop earrings"],
+      voice_cues: ["Enthusiastic and clear pronunciation", "Upbeat rhythm"],
+      reminder: "Bring organic chemistry reaction flashcards",
+      category: "Classmate",
+      facial_features: { face_shape: "Round", glasses: false, beard: false, hair_color: "Black", confidence_signature: 0.97 }
+    },
+    {
+      id: "person_7",
+      name: "Samir Patel",
+      role: "Personal Wellness Coach",
+      avatar_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80",
+      met_count: 9,
+      last_met: "Monday at 8:00 AM",
+      context: "Campus Recreation Gym",
+      notes: "Cardio and sensory regulation routine guide",
+      visual_cues: ["Navy athletic zip hoodie", "Black smartwatch on right wrist", "Broad bright smile"],
+      voice_cues: ["Motivational and energetic tempo", "Encouraging tone"],
+      reminder: "Drink 3 liters of water and track calm zone minutes",
+      category: "Friend",
+      facial_features: { face_shape: "Oval", glasses: false, beard: true, hair_color: "Black", confidence_signature: 0.98 }
+    }
+  ];
+
   // Module Data States
   const [readingItems, setReadingItems] = useState([]);
   const [activeReadingItem, setActiveReadingItem] = useState(null);
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(DEFAULT_INITIAL_CONTACTS);
   const [selectedContact, setSelectedContact] = useState(null);
   const [prevalenceData, setPrevalenceData] = useState(null);
 
@@ -1083,20 +1192,34 @@ function App() {
 
             {/* People Around Me (Avatar Grid) */}
             <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 font-outfit">People Around Me</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-slate-900 font-outfit">People Around Me</h3>
+                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                      {contacts.length} Familiar Persons
+                    </span>
+                  </div>
                   <p className="text-xs text-slate-500">Tap anyone to view their visual cues, voice clues, and meeting context</p>
                 </div>
-                <button
-                  onClick={() => setActiveModal('face_scanner')}
-                  className="px-3.5 py-1.5 bg-blue-50 text-blue-700 rounded-xl text-xs font-bold hover:bg-blue-100 transition-colors flex items-center gap-1.5"
-                >
-                  <i data-lucide="camera" className="w-3.5 h-3.5"></i> Live HUD Scan
-                </button>
+                
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setActiveModal('add_person')}
+                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer"
+                  >
+                    <i data-lucide="user-plus" className="w-4 h-4"></i> Add Person
+                  </button>
+                  <button
+                    onClick={() => setActiveModal('face_scanner')}
+                    className="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 border border-blue-200"
+                  >
+                    <i data-lucide="camera" className="w-3.5 h-3.5"></i> Live HUD Scan
+                  </button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 pt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3.5 pt-2">
                 {contacts.map((person) => (
                   <div
                     key={person.id}
@@ -1104,7 +1227,7 @@ function App() {
                       setSelectedContact(person);
                       setActiveModal('person_profile');
                     }}
-                    className="relative p-3 rounded-2xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all cursor-pointer flex flex-col items-center text-center group"
+                    className="relative p-3 rounded-2xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all cursor-pointer flex flex-col items-center text-center group shadow-xs hover:shadow-md bg-slate-50/40"
                   >
                     {/* Quick Delete Contact Button */}
                     <button
@@ -1123,38 +1246,22 @@ function App() {
                     </div>
                     <span className="font-bold text-slate-900 text-xs truncate max-w-full">{person.name}</span>
                     <span className="text-[11px] text-slate-500 truncate max-w-full">{person.role.split('&')[0]}</span>
-                    <span className="text-[9px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md mt-1">
+                    <span className="text-[9px] font-semibold text-blue-700 bg-blue-100/80 px-2 py-0.5 rounded-md mt-1 border border-blue-200">
                       {person.met_count} visits
                     </span>
                   </div>
                 ))}
 
-                {/* Add Person Action */}
+                {/* Add Person Action Tile */}
                 <div
-                  onClick={() => {
-                    const name = prompt("Enter contact name:");
-                    if (name) {
-                      const newContact = {
-                        name,
-                        role: "Classmate / Colleague",
-                        context: "Campus / Lab",
-                        notes: "Met recently",
-                        visual_cues: ["Friendly posture"],
-                        reminder: "Say hello next time"
-                      };
-                      fetch('/api/face-blindness/contacts', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(newContact)
-                      }).then(() => fetchContacts());
-                    }
-                  }}
-                  className="p-3 rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer flex flex-col items-center justify-center text-center min-h-[140px]"
+                  onClick={() => setActiveModal('add_person')}
+                  className="p-3 rounded-2xl border-2 border-dashed border-blue-300 hover:border-blue-500 bg-blue-50/30 hover:bg-blue-50/70 transition-all cursor-pointer flex flex-col items-center justify-center text-center min-h-[140px] group"
                 >
-                  <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-2">
-                    <i data-lucide="plus" className="w-5 h-5"></i>
+                  <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-md shadow-blue-500/30">
+                    <i data-lucide="user-plus" className="w-5 h-5"></i>
                   </div>
                   <span className="font-bold text-blue-700 text-xs">Add Person</span>
+                  <span className="text-[10px] text-slate-500 mt-0.5">Visual cues</span>
                 </div>
               </div>
             </div>
@@ -1631,6 +1738,26 @@ function App() {
           onClose={() => setActiveModal(null)}
           onSpeak={handleSpeakText}
           onDelete={handleDeleteContact}
+        />
+      )}
+
+      {/* MODAL 5B: ADD FAMILIAR PERSON MODAL */}
+      {activeModal === 'add_person' && (
+        <AddPersonModal
+          onClose={() => setActiveModal(null)}
+          onSave={(newPerson) => {
+            setContacts(prev => [newPerson, ...prev]);
+            setUser(prev => ({
+              ...prev,
+              recognized_contacts_count: prev.recognized_contacts_count + 1,
+              points: prev.points + 25
+            }));
+            setSelectedContact(newPerson);
+            setActiveModal(null);
+            if (handleSpeakText) {
+              handleSpeakText(`Added ${newPerson.name} with ${newPerson.visual_cues.length} visual memory anchors.`);
+            }
+          }}
         />
       )}
 
@@ -3728,6 +3855,377 @@ function FaceScannerModal({ contacts, onClose, onSelectPerson, onSpeak, onContac
 
           </div>
         )}
+
+      </div>
+    </div>
+  );
+}
+
+// --- SUB-COMPONENT: Add Familiar Person & Visual Anchors Modal ---
+function AddPersonModal({ onClose, onSave }) {
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [category, setCategory] = useState("Work");
+  const [context, setContext] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80");
+  const [visualCuesInput, setVisualCuesInput] = useState("Round wireframe glasses, Emerald cardigan");
+  const [voiceCues, setVoiceCues] = useState("Crisp analytical cadence, warm laughter");
+  const [reminder, setReminder] = useState("Review collaborative project goals");
+  const [notes, setNotes] = useState("Met at campus research center");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const presetAvatars = [
+    { label: "Executive (Silver Hair)", url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" },
+    { label: "Designer (Glasses)", url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" },
+    { label: "Clinician (Beard)", url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" },
+    { label: "Researcher (Green)", url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80" },
+    { label: "Consultant (Dark Hair)", url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80" },
+    { label: "Student (Ponytail)", url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&auto=format&fit=crop&q=80" },
+    { label: "Coach (Athletic)", url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80" }
+  ];
+
+  const categories = ["Work", "Classmate", "Mentor", "Family", "Friend", "Healthcare"];
+
+  const handleQuickPreset = (type) => {
+    if (type === 'colleague') {
+      setName("David Kim");
+      setRole("Frontend Systems Engineer");
+      setCategory("Work");
+      setContext("Building B, 3rd Floor Pod");
+      setAvatarUrl("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80");
+      setVisualCuesInput("Black rectangular glasses, Navy Patagonia vest, Apple watch on left wrist");
+      setVoiceCues("Fast-paced articulate speaker, chuckles frequently");
+      setReminder("Follow up on UI component library review");
+      setNotes("Works on accessibility engineering");
+    } else if (type === 'family') {
+      setName("Aunt Maria");
+      setRole("Family / Aunt");
+      setCategory("Family");
+      setContext("Family Gatherings & Sunday Lunches");
+      setAvatarUrl("https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80");
+      setVisualCuesInput("Bright red reading glasses on neck cord, Floral silk scarf, Warm smile");
+      setVoiceCues("High melodic laugh, Speaks with rich expressive intonations");
+      setReminder("Ask about her garden roses and recent book club");
+      setNotes("Loves gardening and baking lemon tarts");
+    } else if (type === 'doctor') {
+      setName("Dr. Julian Reed");
+      setRole("Neurology Specialist");
+      setCategory("Healthcare");
+      setContext("Medical Center Suite 500");
+      setAvatarUrl("https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=300&auto=format&fit=crop&q=80");
+      setVisualCuesInput("Stethoscope over white coat, Silver rimless spectacles, Blue lanyard");
+      setVoiceCues("Deep reassuring cadence, patient listener");
+      setReminder("Bring cognitive visual tracking test logs");
+      setNotes("Follow-up appointment every 3 months");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+    if (!name.trim()) {
+      alert("Please enter the person's name.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const cuesList = visualCuesInput
+      .split(/[,;\n]+/)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const voiceList = voiceCues
+      .split(/[,;\n]+/)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const newPerson = {
+      id: "person_" + Date.now().toString(36),
+      name: name.trim(),
+      role: role.trim() || "Familiar Connection",
+      category,
+      context: context.trim() || "Workplace / Campus",
+      avatar_url: avatarUrl || presetAvatars[0].url,
+      met_count: 1,
+      last_met: "Today",
+      visual_cues: cuesList.length > 0 ? cuesList : ["Friendly posture", "Distinct demeanor"],
+      voice_cues: voiceList.length > 0 ? voiceList : ["Clear spoken voice"],
+      reminder: reminder.trim() || "Say hello and connect next time",
+      notes: notes.trim() || "Recently registered familiar connection",
+      facial_features: {
+        face_shape: "Oval",
+        glasses: visualCuesInput.toLowerCase().includes("glasses") || visualCuesInput.toLowerCase().includes("spectacles") || visualCuesInput.toLowerCase().includes("frames"),
+        beard: visualCuesInput.toLowerCase().includes("beard") || visualCuesInput.toLowerCase().includes("mustache"),
+        hair_color: "Natural",
+        confidence_signature: 0.98
+      }
+    };
+
+    try {
+      await fetch('/api/face-blindness/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPerson)
+      });
+    } catch (err) {
+      console.warn("Saved person locally", err);
+    } finally {
+      setIsSubmitting(false);
+      onSave(newPerson);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
+      <div className="bg-white w-full max-w-4xl max-h-[94vh] rounded-3xl shadow-2xl p-5 sm:p-7 flex flex-col border-2 border-blue-300 relative overflow-y-auto">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-inner">
+              <i data-lucide="user-plus" className="w-6 h-6"></i>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-extrabold text-slate-900 text-xl font-outfit">Add Familiar Person</h3>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                  Prosopagnosia Aid
+                </span>
+              </div>
+              <p className="text-xs text-slate-500">Record visual anchors, voice clues, and meeting context for effortless recognition</p>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+          >
+            <i data-lucide="x" className="w-5 h-5"></i>
+          </button>
+        </div>
+
+        {/* Quick Fill Presets Bar */}
+        <div className="flex items-center gap-2 my-3 p-2.5 bg-blue-50/70 rounded-2xl border border-blue-100 flex-wrap">
+          <span className="text-xs font-bold text-blue-900 flex items-center gap-1">
+            <i data-lucide="sparkles" className="w-3.5 h-3.5 text-blue-600"></i> Quick Presets:
+          </span>
+          <button
+            type="button"
+            onClick={() => handleQuickPreset('colleague')}
+            className="px-3 py-1 bg-white hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-xl border border-blue-200 transition-all cursor-pointer"
+          >
+            💼 Tech Colleague
+          </button>
+          <button
+            type="button"
+            onClick={() => handleQuickPreset('family')}
+            className="px-3 py-1 bg-white hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-xl border border-blue-200 transition-all cursor-pointer"
+          >
+            🏡 Family Member
+          </button>
+          <button
+            type="button"
+            onClick={() => handleQuickPreset('doctor')}
+            className="px-3 py-1 bg-white hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-xl border border-blue-200 transition-all cursor-pointer"
+          >
+            🩺 Medical Specialist
+          </button>
+        </div>
+
+        {/* Form Grid */}
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6 my-2">
+          
+          {/* Left Column: Input Fields (7 cols) */}
+          <div className="lg:col-span-7 space-y-4">
+            
+            {/* Name & Role Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Maya Lin"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Role / Profession</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Project Lead / Lab Partner"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Category Pills */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Relationship Category</label>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setCategory(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      category === cat
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Meeting Context */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Where Do You Usually Meet? (Context Anchor)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Computational Lab 3, 2nd Floor"
+                value={context}
+                onChange={(e) => setContext(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+              />
+            </div>
+
+            {/* Visual Anchors & Cues */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Visual Anchors & Distinctive Features (Comma-Separated)
+              </label>
+              <textarea
+                rows={2}
+                placeholder="e.g. Tortoiseshell glasses, Emerald cardigan, Silver lapel pin, Left parting hair"
+                value={visualCuesInput}
+                onChange={(e) => setVisualCuesInput(e.target.value)}
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-slate-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none resize-none"
+              />
+              <p className="text-[11px] text-slate-500 mt-0.5">Focus on non-facial anchors: eyeglasses, hairstyles, jewelry, scarves, postures</p>
+            </div>
+
+            {/* Voice & Speech Cues */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Voice & Auditory Clues</label>
+              <input
+                type="text"
+                placeholder="e.g. Deep baritone, Fast energetic tempo, Warm laughter"
+                value={voiceCues}
+                onChange={(e) => setVoiceCues(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+              />
+            </div>
+
+            {/* Memory Reminder */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Meeting Notes & Action Reminder</label>
+              <input
+                type="text"
+                placeholder="e.g. Ask about the research grant review on Friday"
+                value={reminder}
+                onChange={(e) => setReminder(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+              />
+            </div>
+
+          </div>
+
+          {/* Right Column: Avatar Selector & Live Preview Card (5 cols) */}
+          <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
+            
+            {/* Avatar Selector */}
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <label className="block text-xs font-bold text-slate-800 mb-2">Select Avatar Photo</label>
+              
+              <div className="grid grid-cols-4 gap-2 mb-3">
+                {presetAvatars.map((av, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setAvatarUrl(av.url)}
+                    className={`relative rounded-xl overflow-hidden aspect-square border-2 transition-all cursor-pointer ${
+                      avatarUrl === av.url ? 'border-blue-600 ring-2 ring-blue-300 scale-105' : 'border-slate-200 opacity-70 hover:opacity-100'
+                    }`}
+                    title={av.label}
+                  >
+                    <img src={av.url} alt={av.label} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+
+              <input
+                type="text"
+                placeholder="Or paste custom image URL..."
+                value={avatarUrl}
+                onChange={(e) => setAvatarUrl(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-300 text-slate-700 outline-none focus:border-blue-500"
+              />
+            </div>
+
+            {/* Live Real-Time Memory Cue Card Preview */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 shadow-xs space-y-3">
+              <div className="flex items-center justify-between text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">
+                <span>Live Card Preview</span>
+                <span className="bg-blue-200/80 text-blue-800 px-2 py-0.5 rounded-md text-[9px]">{category}</span>
+              </div>
+
+              <div className="flex items-center gap-3.5">
+                <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-blue-400 shadow-md shrink-0">
+                  <img src={avatarUrl} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-extrabold text-slate-900 text-base font-outfit truncate">{name || "Person's Name"}</h4>
+                  <p className="text-xs font-semibold text-blue-700 truncate">{role || "Role / Profession"}</p>
+                  <p className="text-[11px] text-slate-500 truncate flex items-center gap-1 mt-0.5">
+                    <i data-lucide="map-pin" className="w-3 h-3 text-blue-500 inline"></i> {context || "Usual meeting context"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Preview Cues Chips */}
+              <div className="pt-1 border-t border-blue-200/60">
+                <p className="text-[10px] font-bold text-slate-700 mb-1">Visual Anchors Preview:</p>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {visualCuesInput.split(/[,;\n]+/).filter(Boolean).slice(0, 3).map((cue, idx) => (
+                    <span key={idx} className="text-[10px] font-bold bg-white text-blue-800 px-2 py-0.5 rounded-lg border border-blue-200 shadow-2xs">
+                      👓 {cue.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-1/3 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-2/3 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
+              >
+                <i data-lucide="check-circle" className="w-4 h-4"></i> {isSubmitting ? "Saving..." : "Save Familiar Person"}
+              </button>
+            </div>
+
+          </div>
+
+        </form>
 
       </div>
     </div>
