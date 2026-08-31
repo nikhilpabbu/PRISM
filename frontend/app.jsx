@@ -74,6 +74,44 @@ function formatSyllableText(text) {
   });
 }
 
+// --- SUB-COMPONENT: Resilient Prism Logo Component with Multi-Level Fallbacks ---
+function PrismLogo({ className = "w-full h-full object-contain", alt = "PRISM Logo" }) {
+  const [srcIndex, setSrcIndex] = useState(0);
+  const sources = [
+    "/static/assets/logo_cropped.png",
+    "/assets/logo_cropped.png",
+    "/static/assets/logo.png",
+    "/assets/logo.png",
+    "/static/logo.png",
+    "/logo.png",
+    "/static/logo_cropped.png",
+    "/logo_cropped.png",
+    "/static/logo.jpeg",
+    "/logo.jpeg"
+  ];
+
+  if (srcIndex >= sources.length) {
+    return (
+      <div className={`flex items-center justify-center bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-500 rounded-xl text-white ${className}`}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-4/5 h-4/5">
+          <polygon points="12 2 2 22 22 22" fill="currentColor" fillOpacity="0.2" />
+          <line x1="12" y1="2" x2="12" y2="22" />
+          <path d="M7 12h10" />
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={sources[srcIndex]}
+      alt={alt}
+      className={className}
+      onError={() => setSrcIndex(prev => prev + 1)}
+    />
+  );
+}
+
 // --- Main PRISM App Component ---
 function App() {
   // Session & Authentication Gating State
@@ -655,11 +693,7 @@ function App() {
         >
           <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-500 p-0.5 shadow-md group-hover:scale-105 transition-transform duration-300">
             <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center overflow-hidden p-1">
-              <img
-                src="/static/assets/logo_cropped.png"
-                alt="PRISM Logo"
-                className="w-full h-full object-contain"
-              />
+              <PrismLogo alt="PRISM Logo" />
             </div>
           </div>
           <div>
@@ -793,7 +827,7 @@ function App() {
                   <div className="relative mb-4 group">
                     <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-600 rounded-full blur-md opacity-30 group-hover:opacity-60 transition duration-500"></div>
                     <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-white p-2 shadow-xl border-2 border-slate-100 flex items-center justify-center overflow-hidden">
-                      <img src="/static/assets/logo_cropped.png" alt="PRISM Adaptive Logo" className="w-full h-full object-contain hover:scale-105 transition-transform duration-300" />
+                      <PrismLogo alt="PRISM Adaptive Logo" className="w-full h-full object-contain hover:scale-105 transition-transform duration-300" />
                     </div>
                   </div>
 
@@ -4822,7 +4856,7 @@ function CopilotModal({ messages, input, setInput, onSend, isListening, onStartL
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-white p-1 border border-purple-200 flex items-center justify-center shadow-xs overflow-hidden">
-              <img src="/static/assets/logo_cropped.png" alt="PRISM Logo" className="w-full h-full object-contain" />
+              <PrismLogo alt="PRISM Logo" />
             </div>
             <div>
               <h3 className="font-bold text-slate-900 text-base font-outfit">PRISM Adaptive AI Copilot</h3>
@@ -5249,7 +5283,7 @@ function AuthPortal({ onLoginSuccess, onSpeak }) {
         <div className="flex items-center gap-3 select-none">
           <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-500 p-0.5 shadow-lg">
             <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center p-1.5 overflow-hidden">
-              <img src="/static/assets/logo_cropped.png" alt="PRISM Logo" className="w-full h-full object-contain" />
+              <PrismLogo alt="PRISM Logo" />
             </div>
           </div>
           <div>
