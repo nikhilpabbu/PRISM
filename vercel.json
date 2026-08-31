@@ -6,15 +6,11 @@
     },
     {
       "source": "/static/:match*",
-      "destination": "/frontend/:match*"
+      "destination": "/static/:match*"
     },
     {
-      "source": "/assets/:match*",
-      "destination": "/frontend/assets/:match*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "source": "/((?!api|static|.*\\..*).*)$",
+      "destination": "/index.html"
     }
   ]
 }
