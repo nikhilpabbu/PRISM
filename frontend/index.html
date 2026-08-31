@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PRISM | Adaptive Accessibility Platform</title>
-  <meta name="description" content="PRISM: Personalized Real-time Intelligent Support Module. One App, Three Profiles. Adaptive Assistive Technology for Dyslexia, Autism, and Prosopagnosia.">
+  <meta name="description" content="PRISM: Personalized Real-time Intelligent Support Module. Adaptive Assistive Technology for Dyslexia and Prosopagnosia (Face Blindness).">
   <link rel="icon" type="image/png" href="/static/logo.png">
   <link rel="apple-touch-icon" href="/static/logo.png">
 
@@ -43,7 +43,36 @@
   <!-- Custom PRISM Design System Stylesheet -->
   <link rel="stylesheet" href="/static/styles.css">
 
-  <!-- React 18 & Babel Standalone for Seamless Modern React Runtime -->
+  <!-- DOM Reconciliation Safeguard for Lucide / Third-Party DOM Mutators -->
+  <script>
+    (function() {
+      if (typeof Node === 'function' && Node.prototype) {
+        const origRemoveChild = Node.prototype.removeChild;
+        Node.prototype.removeChild = function(child) {
+          if (child && child.parentNode !== this) {
+            if (console && console.warn) {
+              console.warn('Safeguarded removeChild: Child not found in parent node', child);
+            }
+            return child;
+          }
+          return origRemoveChild.apply(this, arguments);
+        };
+
+        const origInsertBefore = Node.prototype.insertBefore;
+        Node.prototype.insertBefore = function(newNode, referenceNode) {
+          if (referenceNode && referenceNode.parentNode !== this) {
+            if (console && console.warn) {
+              console.warn('Safeguarded insertBefore: Reference not found in parent node', referenceNode);
+            }
+            return newNode;
+          }
+          return origInsertBefore.apply(this, arguments);
+        };
+      }
+    })();
+  </script>
+
+  <!-- React 18 & Babel Standalone Runtime -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -71,7 +100,32 @@
   <!-- React Root Container -->
   <div id="root"></div>
 
-  <!-- Main React App Script (Transpiled by Babel) -->
-  <script type="text/babel" src="/static/app.jsx"></script>
+  <!-- Main PRISM Application Launcher (Direct Babel Transform) -->
+  <script>
+    (function() {
+      fetch('/static/app.jsx')
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status + ' loading app.jsx');
+          return res.text();
+        })
+        .then(function(jsxCode) {
+          var transpiled = Babel.transform(jsxCode, {
+            presets: [['react', { runtime: 'classic' }]]
+          }).code;
+          eval(transpiled);
+        })
+        .catch(function(err) {
+          console.error("PRISM Loader error:", err);
+          var root = document.getElementById('root');
+          if (root) {
+            root.innerHTML = '<div style="padding:40px; font-family:sans-serif; text-align:center;">' +
+              '<h2 style="color:#e11d48; font-size:24px; font-weight:800; margin-bottom:12px;">Failed to initialize PRISM</h2>' +
+              '<p style="color:#475569; font-size:14px; max-width:500px; margin:0 auto 20px;">' + (err.message || err.toString()) + '</p>' +
+              '<button onclick="location.reload()" style="padding:10px 24px; background:#7c3aed; color:#fff; border:none; border-radius:12px; font-weight:700; cursor:pointer;">Reload Application</button>' +
+              '</div>';
+          }
+        });
+    })();
+  </script>
 </body>
 </html>

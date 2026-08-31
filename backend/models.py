@@ -2,7 +2,23 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
 class ProfileSwitchRequest(BaseModel):
-    profile_id: str  # 'dyslexia' | 'autism' | 'face_blindness' | 'unified'
+    profile_id: str  # 'dyslexia' | 'face_blindness'
+
+class SignUpRequest(BaseModel):
+    email: str
+    password: str
+    name: Optional[str] = ""
+    active_profile: Optional[str] = "dyslexia"
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class AuthResponse(BaseModel):
+    status: str
+    user: Optional[Dict[str, Any]] = None
+    access_token: Optional[str] = None
+    message: Optional[str] = None
 
 class TextSimplifyRequest(BaseModel):
     text: str
@@ -15,6 +31,25 @@ class TextSimplifyResponse(BaseModel):
     reading_time_minutes: float
     difficulty_score: str
     syllable_count: int
+
+class DiagnosticGameSubmitRequest(BaseModel):
+    reversal_score: int  # 0 to 100
+    rapid_word_score: int  # 0 to 100
+    rhyme_score: int  # 0 to 100
+    preferred_tint: str = "cream"
+    total_time_seconds: float = 30.0
+
+class DiagnosticGameResultResponse(BaseModel):
+    stage_level: str
+    stage_code: int
+    severity_label: str
+    overall_score: int
+    accuracy_percent: float
+    visual_fatigue_risk: str
+    reversal_tendency: str
+    recommended_settings: Dict[str, Any]
+    detailed_insights: List[str]
+    points_earned: int
 
 class OCRRequest(BaseModel):
     image_data: Optional[str] = None

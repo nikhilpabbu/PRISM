@@ -176,14 +176,8 @@ body.filter-tritanopia {
 .theme-dyslexia-gradient {
   background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #c084fc 100%);
 }
-.theme-autism-gradient {
-  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
-}
 .theme-faceblindness-gradient {
   background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #60a5fa 100%);
-}
-.theme-unified-gradient {
-  background: linear-gradient(135deg, #4f46e5 0%, #059669 50%, #0284c7 100%);
 }
 
 /* Animated Glowing Gradient Rings */
@@ -233,56 +227,6 @@ body.tint-dark .bionic-bold {
   transform: scale(1.04);
   display: inline-block;
   transition: all 0.12s ease;
-}
-
-/* Calm Zone Breathing Circle Animation */
-@keyframes breatheGuide {
-  0% {
-    transform: scale(0.7);
-    opacity: 0.6;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-  }
-  40% {
-    /* Inhale end */
-    transform: scale(1.15);
-    opacity: 1;
-    box-shadow: 0 0 50px rgba(16, 185, 129, 0.6);
-  }
-  60% {
-    /* Hold */
-    transform: scale(1.15);
-    opacity: 1;
-    box-shadow: 0 0 60px rgba(52, 211, 153, 0.8);
-  }
-  100% {
-    /* Exhale end */
-    transform: scale(0.7);
-    opacity: 0.6;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-  }
-}
-
-.breathing-circle-active {
-  animation: breatheGuide 19s ease-in-out infinite;
-}
-
-/* Wave Sound Synthesizer Ripples */
-@keyframes wavePulse {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-}
-.audio-pulse {
-  animation: wavePulse 3s ease-in-out infinite;
 }
 
 /* Face Recognition HUD Target Frame */
@@ -351,3 +295,170 @@ body.tint-dark .glass-nav {
   color: #0d9488;
   font-weight: 600;
 }
+
+/* Camera Shutter Flash Animation */
+@keyframes cameraFlash {
+  0% { opacity: 0; }
+  20% { opacity: 0.95; background-color: #ffffff; }
+  100% { opacity: 0; }
+}
+
+.camera-flash-active {
+  animation: cameraFlash 0.45s ease-out forwards;
+  pointer-events: none;
+}
+
+/* Document Live Camera Viewfinder HUD */
+.doc-hud-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: #a855f7;
+  pointer-events: none;
+}
+.doc-hud-tl { top: -2px; left: -2px; border-top: 3px solid #a855f7; border-left: 3px solid #a855f7; border-top-left-radius: 6px; }
+.doc-hud-tr { top: -2px; right: -2px; border-top: 3px solid #a855f7; border-right: 3px solid #a855f7; border-top-right-radius: 6px; }
+.doc-hud-bl { bottom: -2px; left: -2px; border-bottom: 3px solid #a855f7; border-left: 3px solid #a855f7; border-bottom-left-radius: 6px; }
+.doc-hud-br { bottom: -2px; right: -2px; border-bottom: 3px solid #a855f7; border-right: 3px solid #a855f7; border-bottom-right-radius: 6px; }
+
+@keyframes docScanLine {
+  0% { top: 4%; opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { top: 94%; opacity: 0.3; }
+}
+
+.doc-laser-scanline {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c084fc, #a855f7, #c084fc, transparent);
+  box-shadow: 0 0 14px #a855f7, 0 0 6px #e879f9;
+  animation: docScanLine 2.2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* Animated Sound Wave Equalizer Bars for Read Aloud */
+@keyframes soundWaveBar {
+  0% { height: 4px; }
+  50% { height: 18px; }
+  100% { height: 4px; }
+}
+
+.sound-bar {
+  width: 3px;
+  background: linear-gradient(180deg, #a855f7, #7c3aed);
+  border-radius: 9999px;
+  display: inline-block;
+  animation: soundWaveBar 0.9s ease-in-out infinite;
+}
+.sound-bar:nth-child(2) { animation-delay: 0.15s; height: 12px; }
+.sound-bar:nth-child(3) { animation-delay: 0.3s; height: 20px; }
+.sound-bar:nth-child(4) { animation-delay: 0.45s; height: 10px; }
+.sound-bar:nth-child(5) { animation-delay: 0.6s; height: 16px; }
+
+/* Enhanced Karaoke Word Highlight */
+.tts-word-highlight {
+  background: linear-gradient(135deg, #fef08a 0%, #fde047 100%) !important;
+  color: #713f12 !important;
+  padding: 2px 6px !important;
+  border-radius: 6px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 14px rgba(234, 179, 8, 0.65), 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  transform: scale(1.06) !important;
+  display: inline-block !important;
+  transition: all 0.1s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border: 1px solid rgba(202, 138, 4, 0.4) !important;
+}
+
+/* Floating Accessible Audio Player Bar */
+.tts-floating-player {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  max-width: 92vw;
+  width: 580px;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4), 0 0 25px rgba(124, 58, 237, 0.25);
+  border-radius: 24px;
+  padding: 10px 16px;
+  color: white;
+  animation: slideUpFloat 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpFloat {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+/* Document Scanner Viewfinder HUD & Laser */
+.doc-hud-corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: #a855f7;
+  border-style: solid;
+}
+.doc-hud-tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-top-left-radius: 12px; }
+.doc-hud-tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-top-right-radius: 12px; }
+.doc-hud-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-bottom-left-radius: 12px; }
+.doc-hud-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-bottom-right-radius: 12px; }
+
+.doc-laser-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #c084fc 30%, #a855f7 50%, #c084fc 70%, transparent 100%);
+  box-shadow: 0 0 16px 3px rgba(168, 85, 247, 0.85);
+  animation: docLaserScan 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes docLaserScan {
+  0% { top: 8%; opacity: 0.85; }
+  100% { top: 92%; opacity: 0.95; }
+}
+
+.camera-flash-active {
+  animation: cameraFlash 0.45s ease-out forwards;
+}
+
+@keyframes cameraFlash {
+  0% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* Diagnostic Game Tile & Pulse Animations */
+.game-tile-target {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.game-tile-target:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+.game-tile-correct {
+  animation: correctBounce 0.4s ease-out;
+  background-color: #d1fae5 !important;
+  border-color: #10b981 !important;
+  color: #065f46 !important;
+}
+@keyframes correctBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.diagnostic-meter-fill {
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+

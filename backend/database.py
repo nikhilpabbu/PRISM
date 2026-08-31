@@ -2,6 +2,7 @@ import json
 import uuid
 from datetime import datetime, timezone
 from typing import Dict, Any, List
+from supabase_client import supabase_db
 
 # Pre-seeded sample database for PRISM (Alex's account)
 initial_database = {
@@ -9,7 +10,7 @@ initial_database = {
         "id": "user_alex_01",
         "name": "Alex Rivera",
         "email": "alex.rivera@prism-adaptive.io",
-        "active_profile": "dyslexia",  # 'dyslexia' | 'autism' | 'face_blindness' | 'unified'
+        "active_profile": "dyslexia",  # 'dyslexia' | 'face_blindness'
         "reading_goal_minutes": 20,
         "reading_minutes_today": 14,
         "reading_streak_days": 6,
@@ -528,10 +529,18 @@ class DatabaseManager:
 
     def update_user_preferences(self, preferences: Dict[str, Any]):
         self.data["user"]["preferences"].update(preferences)
+        try:
+            supabase_db.upsert_user_profile(self.data["user"])
+        except Exception:
+            pass
         return self.data["user"]["preferences"]
 
     def set_active_profile(self, profile_id: str):
         self.data["user"]["active_profile"] = profile_id
+        try:
+            supabase_db.upsert_user_profile(self.data["user"])
+        except Exception:
+            pass
         return self.data["user"]
 
     def get_reading_items(self):
@@ -644,6 +653,14 @@ class DatabaseManager:
             if c["id"] == contact_id:
                 return c
         return None
+
+    def delete_contact(self, contact_id: str) -> bool:
+        initial_len = len(self.data["contacts"])
+        self.data["contacts"] = [c for c in self.data["contacts"] if c["id"] != contact_id]
+        if len(self.data["contacts"]) < initial_len:
+            self.data["user"]["recognized_contacts_count"] = max(0, self.data["user"]["recognized_contacts_count"] - 1)
+            return True
+        return False
 
     def add_contact(self, contact_data: Dict[str, Any]):
         new_c = {

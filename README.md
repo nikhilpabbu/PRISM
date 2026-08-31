@@ -1,5 +1,5 @@
 # 🌈 PRISM: Personalized Real-time Intelligent Support Module
-### Adaptive Accessibility Platform for Dyslexia, Autism & Face Blindness (Prosopagnosia)
+### Adaptive Accessibility Platform for Dyslexia & Face Blindness (Prosopagnosia)
 > **Capgemini x Synchrony Hackathon Innovation | Team 7 - Tech Titans**
 
 ---
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <b>"One App. Three Profiles. Personalized for Every Mind."</b>
+  <b>"One App. Two Specialized Profiles. Personalized for Every Mind."</b>
 </p>
 
 <p align="center">
@@ -25,10 +25,9 @@
 
 Neurodivergent individuals frequently face fragmented tools:
 - **Dyslexia**: Reading fatigue, slow decoding fluency, letter reversals ($b \leftrightarrow d$, $p \leftrightarrow q$).
-- **Autism**: Sensory overload, unstructured anxiety, routine unpredictability, and communication hurdles.
 - **Face Blindness (Prosopagnosia)**: Inability to recognize familiar faces, colleagues, classmates, and social settings.
 
-**PRISM** unifies cognitive support into one adaptive platform that morphs its UI, typography, computer vision features, and assistive AI specifically for each condition.
+**PRISM** unifies cognitive support into an adaptive platform that morphs its UI, typography, computer vision features, and assistive AI specifically for each condition.
 
 ---
 
@@ -44,27 +43,18 @@ Neurodivergent individuals frequently face fragmented tools:
 - **NLP Text Simplifier**: Transforms dense academic paragraphs into *Simpler*, *Shorter*, or *Bullet Format* with readability metrics.
 - **Scan & Read (OCR)**: Extracts and reads text from whiteboard snapshots and printed handouts.
 
-### 2. 🧩 Autism Mode (Green Theme)
-- **Visual Routine Planner**: Interactive schedule timeline with sensory noise ratings (*Calm*, *Medium*, *Interactive*).
-- **Calm Zone**: Animated guided **4-7-8 Breathing Circle** with countdown timers.
-- **Web Audio Ambient Sound Synthesizer**: Zero-dependency browser synthesis of *Gentle Rain*, *Ocean Waves (pink noise LFO)*, *10Hz Alpha Binaural Entrainment*, and *Peace Chimes*.
-- **Emotion Check-In & Coping AI**: 6 expressive mood states with instant de-escalation strategies.
-- **Social Stories Builder**: Step-by-step visual social scenario cards with voice guidance (*Meeting Someone New*, *Handling Routine Changes*, *Sensory Breaks*).
-- **AAC Communication Board**: Tap-to-speak augmentative and alternative communication symbol grid.
-
-### 3. 👁️ Face Blindness (Prosopagnosia) Mode & OpenCV Engine (Blue Theme)
+### 2. 👁️ Face Blindness (Prosopagnosia) Mode & OpenCV Engine (Blue Theme)
 - **OpenCV Computer Vision Face Scanner**: Powered by **OpenCV 5.0** (`cv2`) with real-time skin segmentation, contour detection, and bounding box localization.
 - **Multi-Source Scanning**: Supports **Live Webcam Video Streams**, **Custom Photo Uploads**, and **Contact Presets**.
 - **Live OpenCV Telemetry**: Real-time HUD showing localized face coordinates, eye tracking, expression/smile indicators, and match confidence scores ($98\%+$).
 - **Memory Cue Cards**: Detailed profiles with distinctive visual anchors (*"Rectangular black-rimmed glasses"*, *"Neat brown hair"*, *"Navy blue collared shirts"*), voice clues, and conversation reminders.
 - **Memory Reinforcement Flashcard Quiz**: Interactive practice game testing face-cue associations with points and reward streaks.
 
-### 4. 🌐 Cross-Disability Platform Hub
+### 3. 🌐 Accessibility Platform Hub
 - **PRISM AI Copilot**: Multi-modal conversational assistant with microphone Speech-to-Text (STT) and profile-aware prompt intelligence.
 - **WCAG 2.1 AAA Accessibility Suite**: Font size scaling, high-contrast mode, line spacing, and color-blindness simulation filters (*Protanopia*, *Deuteranopia*, *Tritanopia*).
-- **Global Prevalence & Co-occurrence Analytics**: Interactive data visualization of global populations (800M Dyslexia, 200M Prosopagnosia, 80M Autism) and overlap rates.
-- **7-Tier System Architecture Explorer**: Visual breakdown of the engineering stack.
-- **Lean Business Canvas**: Strategic overview of the 9-block business model.
+- **Global Prevalence Analytics**: Interactive data visualization of global populations (800M Dyslexia, 200M Prosopagnosia) and overlap rates.
+- **Platform Architecture Explorer**: Visual breakdown of the engineering stack.
 
 ---
 
@@ -82,14 +72,14 @@ Neurodivergent individuals frequently face fragmented tools:
                                   |      FastAPI Backend Gateway       |
                                   +------------------+-----------------+
                                                      |
-             +-----------------------+---------------+-----------------------+
-             |                       |                                       |
-+------------v------------+ +--------v---------------+             +---------v---------+
-|   Dyslexia NLP Engine   | |   Autism Routine &     |             |   OpenCV Vision   |
-| (Simplifier, Syllables) | | Sensory Sound Engine   |             | (Haar / Contours) |
-+-------------------------+ +------------------------+             +-------------------+
-             |                       |                                       |
-             +-----------------------+---------------+-----------------------+
+                             +-----------------------+-----------------------+
+                             |                                               |
+                +------------v------------+                     +------------v------------+
+                |   Dyslexia NLP Engine   |                     |   OpenCV Vision Engine  |
+                | (Simplifier, Syllables) |                     |    (Haar / Contours)    |
+                +-------------------------+                     +-------------------------+
+                             |                                               |
+                             +-----------------------+-----------------------+
                                                      |
                                   +------------------v-----------------+
                                   |   Persistent JSON / SQLite Store   |
@@ -112,20 +102,34 @@ cd PRISM
 
 ### 2. Install Dependencies
 ```bash
-pip install fastapi uvicorn opencv-python pydantic requests pillow
+pip install fastapi uvicorn opencv-python pydantic requests pillow supabase
 ```
 
-### 3. Launch the Application Server
+### 3. Supabase Cloud Configuration (Optional / Included)
+PRISM connects to Supabase out of the box with default credentials:
+- **Supabase URL**: `https://txnpyqtopqdeclicefod.supabase.co`
+- **Publishable Key**: `sb_publishable_gqmIo1pGUjD_SV1uXT-m8w_YTVhWH4D`
+- **Postgres DDL Schema**: Located at `backend/supabase_schema.sql`
+
+To link via Supabase CLI:
 ```bash
-cd backend
-python main.py
+supabase login
+supabase link --project-ref txnpyqtopqdeclicefod
+supabase db push
 ```
 
-### 4. Access the Web Application
+### 4. Launch the Application Server
+```bash
+python backend/main.py
+```
+
+### 5. Access the Web Application
 Open your browser and navigate to:
 ```
 http://localhost:8000
 ```
+- Tap **"Log In"** in the top navigation bar to create an account or sign in via Supabase cloud auth.
+- Use **"Continue as Demo Guest"** for instant 1-click evaluation.
 
 ---
 

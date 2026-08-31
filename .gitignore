@@ -40,3 +40,9 @@ Thumbs.db
 
 # Temporary extracted slide media
 pptx_extracted_media/
+*.pptx
+*.log
+scratch/
+test_*.py
+debug_*.py
+check_*.py
