@@ -2,7 +2,12 @@ import os
 import json
 import logging
 from typing import Dict, Any, Optional, List
-from supabase import create_client, Client
+
+try:
+    from supabase import create_client, Client
+except ImportError:
+    create_client = None
+    Client = None
 
 logger = logging.getLogger("prism.supabase")
 

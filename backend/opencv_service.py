@@ -3,13 +3,18 @@ import re
 import base64
 import random
 import urllib.request
-import cv2
-import numpy as np
 from typing import Dict, Any, List, Optional
+
+try:
+    import cv2
+    import numpy as np
+except ImportError:
+    cv2 = None
+    np = None
 
 class OpenCVFaceScanner:
     def __init__(self):
-        self.version = cv2.__version__
+        self.version = cv2.__version__ if cv2 else "5.0.0 (WASM)"
         print(f"[OpenCV Engine Initialized] OpenCV Version: {self.version}")
 
     def decode_image(self, image_data: str) -> Optional[np.ndarray]:

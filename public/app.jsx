@@ -220,13 +220,27 @@ function App() {
     return () => clearTimeout(timer);
   }, [activeView, activeModal, session, isSpeaking, isPaused]);
 
+  // Safe JSON response parser
+  const safeJson = async (res) => {
+    if (!res) return null;
+    try {
+      const text = await res.text();
+      if (!text) return null;
+      return JSON.parse(text);
+    } catch (e) {
+      return null;
+    }
+  };
+
   // Backend API Callers
   const fetchUserData = async (overrideUserId) => {
     try {
       const uid = overrideUserId || session?.id || user.id;
       const res = await fetch(`/api/user${uid ? `?user_id=${encodeURIComponent(uid)}` : ''}`);
-      const data = await res.json();
-      if (data) setUser(prev => ({ ...prev, ...data }));
+      const data = await safeJson(res);
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        setUser(prev => ({ ...prev, ...data }));
+      }
     } catch (e) {
       console.warn("Using offline user cache", e);
     }
@@ -236,9 +250,11 @@ function App() {
     try {
       const uid = overrideUserId || session?.id || user.id;
       const res = await fetch(`/api/dyslexia/reading-items${uid ? `?user_id=${encodeURIComponent(uid)}` : ''}`);
-      const data = await res.json();
-      setReadingItems(data);
-      if (data && data.length > 0) setActiveReadingItem(data[0]);
+      const data = await safeJson(res);
+      if (Array.isArray(data)) {
+        setReadingItems(data);
+        if (data.length > 0) setActiveReadingItem(data[0]);
+      }
     } catch (e) {}
   };
 
@@ -246,9 +262,11 @@ function App() {
     try {
       const uid = overrideUserId || session?.id || user.id;
       const res = await fetch(`/api/face-blindness/contacts${uid ? `?user_id=${encodeURIComponent(uid)}` : ''}`);
-      const data = await res.json();
-      setContacts(data);
-      if (data && data.length > 0) setSelectedContact(data[0]);
+      const data = await safeJson(res);
+      if (Array.isArray(data)) {
+        setContacts(data);
+        if (data.length > 0) setSelectedContact(data[0]);
+      }
     } catch (e) {}
   };
 
@@ -279,8 +297,8 @@ function App() {
   const fetchAnalytics = async () => {
     try {
       const res = await fetch('/api/analytics');
-      const data = await res.json();
-      if (data.prevalence_data) setPrevalenceData(data.prevalence_data);
+      const data = await safeJson(res);
+      if (data && data.prevalence_data) setPrevalenceData(data.prevalence_data);
     } catch (e) {}
   };
 
@@ -4280,9 +4298,16 @@ function AuthPortal({ onLoginSuccess, onSpeak }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), password })
       });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.detail || "Invalid email or password");
+      let data = null;
+      try {
+        const text = await res.text();
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        data = null;
+      }
+
+      if (!res.ok || !data) {
+        throw new Error((data && data.detail) || "Invalid email or password");
       }
       setSuccessMessage("Welcome back! Loading your personalized adaptive workspace...");
       setTimeout(() => {
@@ -4320,9 +4345,16 @@ function AuthPortal({ onLoginSuccess, onSpeak }) {
           active_profile: activeProfile
         })
       });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.detail || "Account creation failed");
+      let data = null;
+      try {
+        const text = await res.text();
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        data = null;
+      }
+
+      if (!res.ok || !data) {
+        throw new Error((data && data.detail) || "Account creation failed");
       }
       setSuccessMessage("Account created successfully! Preparing your adaptive suite...");
       setTimeout(() => {
