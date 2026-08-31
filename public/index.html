@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRISM | Adaptive Accessibility Platform</title>
+  <meta name="description" content="PRISM: Personalized Real-time Intelligent Support Module. Adaptive Assistive Technology for Dyslexia and Prosopagnosia (Face Blindness).">
+  <link rel="icon" type="image/png" href="/static/logo.png">
+  <link rel="apple-touch-icon" href="/static/logo.png">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              purple: '#7C3AED',
+              purpleLight: '#EDE9FE',
+              green: '#059669',
+              greenLight: '#D1FAE5',
+              blue: '#2563EB',
+              blueLight: '#DBEAFE',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif'],
+            lexend: ['Lexend', 'sans-serif'],
+            atkinson: ['Atkinson Hyperlegible', 'sans-serif'],
+            opendyslexic: ['OpenDyslexic', 'Lexend', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons via Unpkg -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom PRISM Design System Stylesheet -->
+  <link rel="stylesheet" href="/static/styles.css">
+
+  <!-- DOM Reconciliation Safeguard for Lucide / Third-Party DOM Mutators -->
+  <script>
+    (function() {
+      if (typeof Node === 'function' && Node.prototype) {
+        const origRemoveChild = Node.prototype.removeChild;
+        Node.prototype.removeChild = function(child) {
+          if (child && child.parentNode !== this) {
+            if (console && console.warn) {
+              console.warn('Safeguarded removeChild: Child not found in parent node', child);
+            }
+            return child;
+          }
+          return origRemoveChild.apply(this, arguments);
+        };
+
+        const origInsertBefore = Node.prototype.insertBefore;
+        Node.prototype.insertBefore = function(newNode, referenceNode) {
+          if (referenceNode && referenceNode.parentNode !== this) {
+            if (console && console.warn) {
+              console.warn('Safeguarded insertBefore: Reference not found in parent node', referenceNode);
+            }
+            return newNode;
+          }
+          return origInsertBefore.apply(this, arguments);
+        };
+      }
+    })();
+  </script>
+
+  <!-- React 18 & Babel Standalone Runtime -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 selection:bg-purple-200 selection:text-purple-900">
+
+  <!-- Colorblind Filter Definitions (SVG Matrix filters) -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Protanopia (Red-Blind) -->
+      <filter id="protanopia-filter">
+        <feColorMatrix type="matrix" values="0.567, 0.433, 0, 0, 0 0.558, 0.442, 0, 0, 0 0, 0.242, 0.758, 0, 0 0, 0, 0, 1, 0" />
+      </filter>
+      <!-- Deuteranopia (Green-Blind) -->
+      <filter id="deuteranopia-filter">
+        <feColorMatrix type="matrix" values="0.625, 0.375, 0, 0, 0 0.7, 0.3, 0, 0, 0 0, 0.3, 0.7, 0, 0 0, 0, 0, 1, 0" />
+      </filter>
+      <!-- Tritanopia (Blue-Blind) -->
+      <filter id="tritanopia-filter">
+        <feColorMatrix type="matrix" values="0.95, 0.05, 0, 0, 0 0, 0.433, 0.567, 0, 0 0, 0.475, 0.525, 0, 0 0, 0, 0, 1, 0" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- React Root Container -->
+  <div id="root"></div>
+
+  <!-- Main PRISM Application Launcher (Direct Babel Transform) -->
+  <script>
+    (function() {
+      fetch('/static/app.jsx')
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status + ' loading app.jsx');
+          return res.text();
+        })
+        .then(function(jsxCode) {
+          var transpiled = Babel.transform(jsxCode, {
+            presets: [['react', { runtime: 'classic' }]]
+          }).code;
+          eval(transpiled);
+        })
+        .catch(function(err) {
+          console.error("PRISM Loader error:", err);
+          var root = document.getElementById('root');
+          if (root) {
+            root.innerHTML = '<div style="padding:40px; font-family:sans-serif; text-align:center;">' +
+              '<h2 style="color:#e11d48; font-size:24px; font-weight:800; margin-bottom:12px;">Failed to initialize PRISM</h2>' +
+              '<p style="color:#475569; font-size:14px; max-width:500px; margin:0 auto 20px;">' + (err.message || err.toString()) + '</p>' +
+              '<button onclick="location.reload()" style="padding:10px 24px; background:#7c3aed; color:#fff; border:none; border-radius:12px; font-weight:700; cursor:pointer;">Reload Application</button>' +
+              '</div>';
+          }
+        });
+    })();
+  </script>
+</body>
+</html>

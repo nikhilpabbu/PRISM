@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/static/:match*",
+      "destination": "/frontend/:match*"
+    },
+    {
+      "source": "/assets/:match*",
+      "destination": "/frontend/assets/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
+    }
+  ]
+}
