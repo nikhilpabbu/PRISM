@@ -2207,6 +2207,19 @@ function ScanAndReadModal({
     }
   };
 
+  // Download captured document photo
+  const downloadDocumentPhoto = (e) => {
+    if (e) e.stopPropagation();
+    const photo = capturedSnapshot || uploadedImage;
+    if (!photo) return;
+    const a = document.createElement('a');
+    a.href = photo;
+    a.download = `prism_document_scan_${Date.now()}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   // Start webcam when activeTab is 'webcam'
   useEffect(() => {
     if (activeTab === 'webcam') {
@@ -2430,6 +2443,27 @@ function ScanAndReadModal({
                   className="px-10 py-4 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-2xl font-black text-base sm:text-lg shadow-2xl shadow-purple-600/60 flex items-center gap-3 transform hover:scale-105 active:scale-95 transition-all border-2 border-white/50 cursor-pointer"
                 >
                   <i data-lucide="camera" className="w-6 h-6"></i> 📸 Capture Document & Extract Text
+                </button>
+              </div>
+            )}
+
+            {/* Saved Snapshot Action Overlay (Save Photo & Retake) */}
+            {capturedSnapshot && (
+              <div className="absolute bottom-6 inset-x-0 flex items-center justify-center gap-3 z-20 flex-wrap px-4">
+                <button
+                  onClick={downloadDocumentPhoto}
+                  className="px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl font-black text-sm sm:text-base shadow-2xl flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all border-2 border-white/50 cursor-pointer"
+                >
+                  <i data-lucide="download" className="w-5 h-5"></i> 💾 Save & Download Photo
+                </button>
+                <button
+                  onClick={() => {
+                    setCapturedSnapshot(null);
+                    startWebcam(facingMode);
+                  }}
+                  className="px-6 py-3.5 bg-slate-900/90 hover:bg-slate-800 text-white rounded-2xl font-black text-sm sm:text-base shadow-2xl flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all border border-slate-600 cursor-pointer backdrop-blur-md"
+                >
+                  <i data-lucide="camera" className="w-5 h-5"></i> 🔄 Retake Live Photo
                 </button>
               </div>
             )}
@@ -3683,29 +3717,64 @@ function FaceScannerModal({ contacts, onClose, onSelectPerson, onSpeak, onContac
               </div>
             </div>
 
-            {/* Quick Action Suite */}
-            <div className="space-y-2 pt-2">
-              {capturedSnapshot && (
+            {/* Telemetry Actions */}
+            {capturedSnapshot && (
+              <div className="space-y-2 pt-2">
+                <button
+                  onClick={() => {
+                    const photoToDownload = cvResult?.annotated_image || capturedSnapshot || uploadedImage;
+                    if (!photoToDownload) return;
+                    const a = document.createElement('a');
+                    a.href = photoToDownload;
+                    a.download = `prism_hud_face_${Date.now()}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                  }}
+                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 transition-all cursor-pointer active:scale-95"
+                >
+                  <i data-lucide="download" className="w-4 h-4"></i> 💾 Save & Download Face Photo (.jpg)
+                </button>
+
                 <button
                   onClick={() => setShowAddContactForm(!showAddContactForm)}
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 shadow-md transition-all"
+                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
                 >
-                  <i data-lucide="user-plus" className="w-4 h-4"></i> 💾 Save Snapshot as New Contact
+                  <i data-lucide="user-plus" className="w-4 h-4"></i> 👤 Save as Familiar Person
                 </button>
-              )}
+              </div>
+            )}
 
-              {scanMode === 'presets' && (
+            {scanMode === 'presets' && (
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    const target = contacts[selectedPersonIndex];
+                    if (target && target.avatar_url) {
+                      const a = document.createElement('a');
+                      a.href = target.avatar_url;
+                      a.download = `${target.name.toLowerCase().replace(/\s+/g, '_')}_photo.jpg`;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                    }
+                  }}
+                  className="w-full py-2 bg-slate-700 hover:bg-slate-600 text-blue-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <i data-lucide="download" className="w-3.5 h-3.5"></i> 💾 Download Person Photo
+                </button>
+
                 <button
                   onClick={() => {
                     const nextIdx = (selectedPersonIndex + 1) % contacts.length;
                     setSelectedPersonIndex(nextIdx);
                   }}
-                  className="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <i data-lucide="refresh-cw" className="w-3.5 h-3.5"></i> Next Familiar Person ({selectedPersonIndex + 1}/{contacts.length})
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
         </div>
