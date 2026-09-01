@@ -126,7 +126,8 @@ function App() {
 
   // Navigation & Profile States ('welcome', 'dyslexia', 'face_blindness', 'insights', 'architecture')
   const [activeView, setActiveView] = useState('welcome');
-  const [activeModal, setActiveModal] = useState(null); // 'reader', 'simplifier', 'ocr', 'face_scanner', 'person_profile', 'memory_quiz', 'copilot', 'accessibility'
+  const [activeModal, setActiveModal] = useState(null); // 'reader', 'simplifier', 'ocr', 'face_scanner', 'person_profile', 'memory_quiz', 'accessibility', 'add_person', 'memory_bank', 'diagnostic_game'
+  const [isArchImageModalOpen, setIsArchImageModalOpen] = useState(false);
 
   // User Profile & Preferences State
   const [user, setUser] = useState({
@@ -1441,44 +1442,124 @@ function App() {
           </div>
         )}
 
-        {/* VIEW 5: INTERACTIVE ARCHITECTURE EXPLORER (IMAGE 1.png / Slide 5) */}
+        {/* VIEW 5: INTERACTIVE ARCHITECTURE EXPLORER (Slide 5) */}
         {activeView === 'architecture' && (
           <div className="space-y-8 animate-fade-in">
-            <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-bold mb-2">
-                <i data-lucide="layers" className="w-3.5 h-3.5"></i> Platform Architecture Explorer
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-bold font-outfit">
-                PRISM Core Engineering Architecture (Slide 5)
-              </h1>
-              <p className="text-slate-300 text-sm mt-1">
-                Explore the complete modular architecture powering our adaptive accessibility engine.
-              </p>
+            
+            {/* Header Banner */}
+            <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-bold mb-2">
+                  <i data-lucide="layers" className="w-3.5 h-3.5"></i> Platform Architecture Explorer
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-bold font-outfit">
+                  System Architecture & Core Engineering
+                </h1>
+                <p className="text-slate-300 text-sm mt-1 max-w-2xl">
+                  Encrypted Online Examination Question Paper Distribution with Role-Based Access Control and Adaptive Accessibility Modules.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsArchImageModalOpen(true)}
+                  className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <i data-lucide="maximize-2" className="w-4 h-4"></i> Fullscreen Diagram
+                </button>
+              </div>
             </div>
 
-            {/* Architecture Grid */}
+            {/* Featured System Architecture Blueprint Card */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold shadow-inner">
+                    <i data-lucide="cpu" className="w-6 h-6"></i>
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-slate-900 text-lg sm:text-xl font-outfit">
+                      System Architecture Blueprint
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Encrypted Online Examination Question Paper Distribution with Role-Based Access Control
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsArchImageModalOpen(true)}
+                    className="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer border border-indigo-200"
+                  >
+                    <i data-lucide="zoom-in" className="w-3.5 h-3.5"></i> Enlarge
+                  </button>
+                  <a
+                    href="/static/assets/system_architecture.png"
+                    download="system_architecture.png"
+                    className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <i data-lucide="download" className="w-3.5 h-3.5"></i> Download
+                  </a>
+                </div>
+              </div>
+
+              {/* Clickable Image Container */}
+              <div
+                onClick={() => setIsArchImageModalOpen(true)}
+                className="relative group rounded-2xl overflow-hidden border-2 border-slate-200 hover:border-indigo-500 transition-all cursor-zoom-in bg-slate-950/5 p-2 sm:p-4 flex items-center justify-center shadow-inner"
+              >
+                <img
+                  src="/static/assets/system_architecture.png"
+                  alt="System Architecture Diagram - Encrypted Online Examination Question Paper Distribution with RBAC"
+                  className="w-full h-auto max-h-[640px] object-contain rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.01]"
+                  onError={(e) => {
+                    if (!e.target.dataset.tried) {
+                      e.target.dataset.tried = "1";
+                      e.target.src = "/assets/system_architecture.png";
+                    } else if (e.target.dataset.tried === "1") {
+                      e.target.dataset.tried = "2";
+                      e.target.src = "/system_architecture.png";
+                    }
+                  }}
+                />
+                <div className="absolute bottom-4 right-4 bg-slate-950/80 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow-md">
+                  <i data-lucide="zoom-in" className="w-3.5 h-3.5"></i> Tap to View Full Resolution
+                </div>
+              </div>
+            </div>
+
+            {/* Architecture Grid Breakdown */}
             <div className="space-y-6">
               
               {/* Layer 1: User Journey */}
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-                <h3 className="text-sm font-extrabold uppercase tracking-wider text-purple-700 mb-3">1. User Journey Flow</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-center text-xs">
-                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900">1. Sign Up / Login</div>
-                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900">2. Choose Profile</div>
-                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900">3. Profile Setup</div>
-                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900">4. Adaptive Dashboard</div>
-                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900">5. Use AI Tools</div>
-                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900">6. Progress & Insights</div>
+                <h3 className="text-sm font-extrabold uppercase tracking-wider text-purple-700 mb-3 flex items-center gap-2">
+                  <i data-lucide="users" className="w-4 h-4"></i> 1. Users (Client Layer) & Authentication Flow
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900 border border-purple-100">
+                    👨‍💼 Admin (User/Exam/System Settings)
+                  </div>
+                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900 border border-purple-100">
+                    👨‍🏫 Faculty (Create/Encrypt Question Paper)
+                  </div>
+                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900 border border-purple-100">
+                    🧑‍💻 Examiner (Decrypt/View/Publish)
+                  </div>
+                  <div className="p-3 bg-purple-50 rounded-xl font-bold text-purple-900 border border-purple-100">
+                    👩‍🎓 Student (Attempt/Submit Answers)
+                  </div>
                 </div>
               </div>
 
-              {/* Layer 2: Frontend & Core Engine (2 Modules: Dyslexia & Face Blindness) */}
+              {/* Layer 2: Application Layer (Web Server) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 {/* Dyslexia Module Engine */}
                 <div className="bg-purple-50/50 rounded-3xl p-6 border-2 border-purple-200">
                   <div className="flex items-center gap-2 text-purple-700 font-bold mb-3">
-                    <i data-lucide="book-open" className="w-5 h-5"></i> A. Dyslexia Module
+                    <i data-lucide="book-open" className="w-5 h-5"></i> A. Dyslexia Module & Core Engines
                   </div>
                   <ul className="text-xs space-y-2 text-slate-700">
                     <li>• OCR & Text Extraction (Vision / OpenCV)</li>
@@ -1492,7 +1573,7 @@ function App() {
                 {/* Face Blindness Module Engine */}
                 <div className="bg-blue-50/50 rounded-3xl p-6 border-2 border-blue-200">
                   <div className="flex items-center gap-2 text-blue-700 font-bold mb-3">
-                    <i data-lucide="scan-face" className="w-5 h-5"></i> B. Face Blindness Module
+                    <i data-lucide="scan-face" className="w-5 h-5"></i> B. Face Blindness Module & HUD
                   </div>
                   <ul className="text-xs space-y-2 text-slate-700">
                     <li>• Face Recognition Assistance HUD (OpenCV Haar Cascades)</li>
@@ -1508,21 +1589,21 @@ function App() {
               {/* Layer 3: Backend Services & Data Layer */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-                  <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-500 mb-3">Backend Microservices</h3>
+                  <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-500 mb-3">Backend Microservices & Encryption</h3>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2 bg-slate-50 rounded-lg">API Gateway (FastAPI REST)</div>
-                    <div className="p-2 bg-slate-50 rounded-lg">User & Profile Service</div>
-                    <div className="p-2 bg-slate-50 rounded-lg">AI Orchestration Engine</div>
-                    <div className="p-2 bg-slate-50 rounded-lg">Analytics & Insights</div>
+                    <div className="p-2 bg-slate-50 rounded-lg">Encryption Module (AES / RSA)</div>
+                    <div className="p-2 bg-slate-50 rounded-lg">RBAC Access Control Module</div>
+                    <div className="p-2 bg-slate-50 rounded-lg">Audit & Log Module</div>
                   </div>
                 </div>
 
                 <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
                   <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-500 mb-3">Data & Security Layer</h3>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="p-2 bg-slate-50 rounded-lg">Primary DB (In-Memory / SQLite)</div>
-                    <div className="p-2 bg-slate-50 rounded-lg">Face Embeddings & Anchors</div>
-                    <div className="p-2 bg-slate-50 rounded-lg">End-to-End Privacy & Local-First</div>
+                    <div className="p-2 bg-slate-50 rounded-lg">Supabase Cloud / PostgreSQL</div>
+                    <div className="p-2 bg-slate-50 rounded-lg">Encrypted Storage at Rest</div>
+                    <div className="p-2 bg-slate-50 rounded-lg">SSL/TLS & Multi-Factor Auth</div>
                     <div className="p-2 bg-slate-50 rounded-lg">WCAG 2.1 AAA Native UX</div>
                   </div>
                 </div>
@@ -1854,6 +1935,52 @@ function App() {
           onUpdate={handleUpdatePreference}
           onClose={() => setActiveModal(null)}
         />
+      )}
+
+      {/* MODAL 9: FULLSCREEN ARCHITECTURE BLUEPRINT LIGHTBOX */}
+      {isArchImageModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in">
+          <div className="bg-white w-full max-w-7xl max-h-[96vh] rounded-3xl shadow-2xl p-4 sm:p-6 flex flex-col border border-slate-200 overflow-y-auto relative">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-2">
+              <div className="flex items-center gap-2.5">
+                <i data-lucide="cpu" className="w-5 h-5 text-indigo-600"></i>
+                <h3 className="font-extrabold text-slate-900 text-lg font-outfit">System Architecture Blueprint</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href="/static/assets/system_architecture.png"
+                  download="system_architecture.png"
+                  className="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer border border-indigo-200"
+                >
+                  <i data-lucide="download" className="w-3.5 h-3.5"></i> Download Blueprint
+                </a>
+                <button
+                  onClick={() => setIsArchImageModalOpen(false)}
+                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+                >
+                  <i data-lucide="x" className="w-5 h-5"></i>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-2 my-auto flex items-center justify-center overflow-auto">
+              <img
+                src="/static/assets/system_architecture.png"
+                alt="System Architecture Diagram Fullscreen"
+                className="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-xl border border-slate-200 bg-white"
+                onError={(e) => {
+                  if (!e.target.dataset.tried) {
+                    e.target.dataset.tried = "1";
+                    e.target.src = "/assets/system_architecture.png";
+                  } else if (e.target.dataset.tried === "1") {
+                    e.target.dataset.tried = "2";
+                    e.target.src = "/system_architecture.png";
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Universal Floating Read Aloud Audio Controller */}
